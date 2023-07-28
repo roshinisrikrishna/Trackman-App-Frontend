@@ -1,0 +1,277 @@
+import React, { useState, useEffect } from 'react';
+import { useTable, useResizeColumns } from 'react-table';
+import { Modal, NavLink, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, InputGroupAddon, InputGroupText, Input, InputGroup } from 'reactstrap';
+import { Resizable } from 'react-resizable';
+import { useFilters, useSortBy } from 'react-table';
+import { Table, Button, Card, CardHeader, CardFooter, Container, Row, Pagination, PaginationItem, PaginationLink, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import { Scrollbars } from 'react-custom-scrollbars';
+
+const Index = () => {
+  const [data, setData] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const HOME_URL = 'http://localhost:5000/users';
+      const response = await axios.get(HOME_URL);
+      if (Array.isArray(response.data)) {
+        setData(response.data);
+      } else {
+        console.log('Response data is not an array:', response.data);
+      }
+    } catch (error) {
+      console.log('Error while loading data:', error);
+    }
+  };
+
+  const deleteUser = async (id) => {
+    if (window.confirm('Are you sure you want to DELETE the User?')) {
+      try {
+        const DELETE_URL = `http://localhost:5000/user/${id}/delete`;
+        await axios.delete(DELETE_URL);
+        toast.success('User deleted successfully');
+
+        setData((prevData) => prevData.filter((item) => item.id !== id));
+      } catch (error) {
+        console.log('Error while deleting user:', error);
+      }
+    }
+  };
+
+  const openModal = (user) => {
+    setSelectedUser(user);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const filteredData = data.filter((user) =>
+    user.username.toLowerCase().includes(searchValue.toLowerCase())
+  );
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: 'ID',
+        accessor: 'id',
+        Cell: ({ value, row }) => (
+          <NavLink className="link-button" onClick={() => openModal(row.original)}>
+            {value}
+          </NavLink>
+        ),
+        minWidth: 100,
+        maxWidth: 200,
+        disableSortBy: true
+      },
+      {
+        Header: 'Username',
+        accessor: 'username',
+        Cell: ({ value, row }) => (
+          <NavLink className="link-button" onClick={() => openModal(row.original)}>
+            {value}
+          </NavLink>
+        ),
+        minWidth: 150,
+        maxWidth: 300,
+        disableSortBy: true
+      },
+      {
+        Header: 'Email',
+        accessor: 'email_id',
+        Cell: ({ value, row }) => (
+          <NavLink className="link-button" onClick={() => openModal(row.original)}>
+            {value}
+          </NavLink>
+        ),
+        minWidth: 200,
+        maxWidth: 400,
+        disableSortBy: true
+      },
+      {
+        Header: 'Designation',
+        accessor: 'designation',
+        Cell: ({ value, row }) => (
+          <NavLink className="link-button" onClick={() => openModal(row.original)}>
+            {value}
+          </NavLink>
+        ),
+        minWidth: 150,
+        maxWidth: 300,
+        disableSortBy: true
+      },
+    ],
+    []
+  );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({ columns, data }, useResizeColumns);
+  
+
+  const [hoveredRow, setHoveredRow] = useState(null);
+
+  const handleMouseEnter = (row) => {
+    setHoveredRow(row);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredRow(null);
+  };
+
+  return (
+    <>
+      <Container className="mt-4" style={{ maxWidth: '900px' }}>
+        <Row>
+          <div className="col">
+            <Card className="shadow">
+              <CardHeader className="border-0">
+                <h3 className="mb-0 mt-4">Users</h3>
+              </CardHeader>
+              <div className="table-wrapper" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                <Scrollbars style={{ width: 800, height: 500 }}>
+                <Table className="align-items-center table-flush" responsive {...getTableProps()}>
+                  <thead className="thead-light">
+                    {headerGroups.map((headerGroup) => (
+                      <tr {...headerGroup.getHeaderGroupProps()}>
+                        {headerGroup.headers.map((column) => (
+                          <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                        ))}
+                      </tr>
+                    ))}
+                  </thead>
+                  <tbody {...getTableBodyProps()}>
+                    {rows.map((row) => {
+                      prepareRow(row);
+                      const item = row.original;
+                      const isHovered = hoveredRow === row;
+
+                      return (
+                        <tr
+                          {...row.getRowProps()}
+                          key={row.id}
+                          onMouseEnter={() => handleMouseEnter(row)}
+                          onMouseLeave={handleMouseLeave}
+                        >
+                          {row.cells.map((cell) => (
+                            <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                          ))}
+                          <td className="text-right">
+                            <UncontrolledDropdown isOpen={isHovered} toggle={() => {}}>
+                              <DropdownToggle
+                                className="btn-icon-only text-light"
+                                href="#pablo"
+                                role="button"
+                                size="sm"
+                                color=""
+                                onClick={(e) => e.preventDefault()}
+                              >
+                                <i className="fas fa-ellipsis-v" />
+                              </DropdownToggle>
+                              <DropdownMenu className="dropdown-menu-arrow" right>
+                                <DropdownItem onClick={() => deleteUser(row.id)}>Delete</DropdownItem>
+                                <DropdownItem>
+                                  <Link to={`/admin/user-profile`}>Edit</Link>
+                                </DropdownItem>
+                                <DropdownItem>
+                                  <Link to={`/admin/tables`}>View Travel Details</Link>
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </Table>
+                </Scrollbars>
+              </div>
+              <CardFooter className="py-4">
+                <nav aria-label="...">
+                  <Pagination className="pagination justify-content-end mb-0" listClassName="justify-content-end mb-0">
+                    <PaginationItem className="disabled">
+                      <PaginationLink href="#pablo" onClick={(e) => e.preventDefault()} tabIndex="-1">
+                        <i className="fas fa-angle-left" />
+                        <span className="sr-only">Previous</span>
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem className="active">
+                      <PaginationLink href="#pablo" onClick={(e) => e.preventDefault()}>
+                        1
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#pablo" onClick={(e) => e.preventDefault()}>
+                        2 <span className="sr-only">(current)</span>
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#pablo" onClick={(e) => e.preventDefault()}>
+                        3
+                      </PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                      <PaginationLink href="#pablo" onClick={(e) => e.preventDefault()}>
+                        <i className="fas fa-angle-right" />
+                        <span className="sr-only">Next</span>
+                      </PaginationLink>
+                    </PaginationItem>
+                  </Pagination>
+                </nav>
+              </CardFooter>
+            </Card>
+          </div>
+        </Row>
+      </Container>
+      {selectedUser && (
+        <Modal isOpen={modalOpen} toggle={closeModal}>
+          <ModalHeader toggle={closeModal}>User Details</ModalHeader>
+          <ModalBody>
+            <Table bordered={false} className="table">
+              <tbody>
+                <tr>
+                  <th className="modal-details-title">Id</th>
+                  <td className="modal-details-value">{selectedUser.id}</td>
+                </tr>
+                <tr>
+                  <th className="modal-details-title">Username</th>
+                  <td className="modal-details-value">{selectedUser.username}</td>
+                </tr>
+                <tr>
+                  <th className="modal-details-title">Email</th>
+                  <td className="modal-details-value">{selectedUser.email_id}</td>
+                </tr>
+                <tr>
+                  <th className="modal-details-title">Designation</th>
+                  <td className="modal-details-value">{selectedUser.designation}</td>
+                </tr>
+              </tbody>
+            </Table>
+          </ModalBody>
+          <ModalFooter>
+            <Link to={`/admin/tables`}>View Travel Details</Link>
+            <button className="btn btn-primary" onClick={closeModal}>
+              Close
+            </button>
+          </ModalFooter>
+        </Modal>
+      )}
+    </>
+  );
+};
+
+export default Index;
