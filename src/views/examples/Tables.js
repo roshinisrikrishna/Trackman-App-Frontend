@@ -202,17 +202,24 @@ const renderHeader = () => {
   
     return (
       <div className="flex justify-content-between">
-        <Button
+     <Button
           type="button"
           label="Clear"
           outlined
           onClick={clearFilter}
-          className="p-button-sm p-button-text p-button-outlined"
-          style={{ fontFamily: 'Montserrat' }}
+          className="p-button-sm p-button-text p-button-outlined button-transition"
+          style={{
+            fontFamily: 'Helvetica Neue',
+            borderRadius: '20px',
+            backgroundImage: 'linear-gradient(45deg, #26f2fc, #05d1fa)',
+            color: 'white',
+            marginRight: '20px'
+          }}
         >
           <MdFilterAltOff style={{ marginRight: '5px' }} />
         </Button>
-        <span className="p-input-icon-right">
+
+        <span className="p-input-icon-right" style={{ marginRight: '20px' }}>
           <InputText
             value={globalFilterValue}
             onChange={onGlobalFilterChange}
@@ -223,25 +230,36 @@ const renderHeader = () => {
           <BsSearch />
           <i className="pi pi-search" style={{ color: 'black' }} />
         </span>
+
         <Button
           type="button"
           icon="pi pi-table"
           label="Columns"
           onClick={toggleColumnSelectionModal}
-          className="p-button-sm p-button-text p-button-outlined"
-          style={{ fontFamily: 'Montserrat' }}
+          className="p-button-sm p-button-text p-button-outlined button-transition"
+          style={{
+            fontFamily: 'Helvetica Neue',
+            color: 'black',
+            borderColor: 'orange',
+            backgroundColor: 'white',
+            borderWidth: '2px'
+          }}
         />
+
         {showColumnSelectionModal && columnSelectionModal}
-                <SelectButton
-                   className="float-right"
-                  style={{ display: "flex", flexDirection: "row",}}
-                  value={size}
-                  onChange={(e) => setSize(e.value)}
-                  options={sizeOptions}
-                />
+
+        <SelectButton
+          className="float-right"
+          style={{ display: "flex", flexDirection: "row", color: "black" }}  
+          value={size}
+          onChange={(e) => setSize(e.value)}
+          options={sizeOptions}
+          optionStyle={{ backgroundColor: "yellow" }} 
+        />
+
       </div>
     );
-  };
+    }    
   
 const idBodyTemplate = (rowData) => {
   return (
@@ -519,7 +537,7 @@ const header = renderHeader();
             {/* </div> */}
             </Row>
       </Container>
-      <Container className="mt-4" style={{ maxWidth: '900px' }}>
+      <Container className="mt-4" style={{ maxWidth: '1200px' }}>
         <Row>
         <div className="col">
             <Card className="shadow">
@@ -548,8 +566,6 @@ const header = renderHeader();
                   paginator
                   rows={5}
                   rowsPerPageOptions={[5, 10, 25, 50]}
-                  
-                  stripedRows
                   tableStyle={{ minWidth: '50rem', fontFamily: 'Montserrat', fontSize: '16px', color: 'black', fontWeight: 200 }}
                   emptyMessage="No vehicles found."
                 >
@@ -691,26 +707,86 @@ const header = renderHeader();
       </Container>
       <style>
       {`
+      ::-webkit-scrollbar {
+        width: 4px;
+        height:6px;
+      }
       
-        .p-datatable .p-datatable-thead > tr > th {
-          position: sticky;
-          top: 0;
-          background-color: black;
+      ::-webkit-scrollbar-thumb {
+        background-color: #0521f7; /* Blueish Green color */
+        border-radius: 10px;
+      }
+      
+      ::-webkit-scrollbar-thumb:hover {
+        background-color: #05f731; /* Darker shade on hover */
+      }
+      
+      /* Styling the vertical scrollbar */
+      ::-webkit-scrollbar-track {
+        background-color: #0521f7;
+      }
+      
+      ::-webkit-scrollbar-track-piece {
+        background-color: #f5f5f5; /* Scrollbar background color */
+      }
+      
+      .button-transition {
+        transition: transform 0.2s ease-in-out;
+      }
+      
+      .button-transition:hover {
+        transform: scale(1.02);
+      }
+      
+      .p-selectbutton .p-button.p-highlight {
+        background-image: linear-gradient(45deg, #02f738, #00f5af); 
+        font-size: 16px;
+        font-family: 'Helvetica Neue', sans-serif;
+      
+      }
+
+      .p-datatable .p-datatable-thead > tr > th {
+        position: sticky;
+        top: 0;
+        background-color: black; 
+        color: white;
+        font-family: 'Helvetica Neue', sans-serif;
+        font-size: 14px;
+        transition: background-color 0.3s;
+      }
+
+      .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+        background-color: #d65e02; 
+        color: white;
+        font-size: 18px;
+        font-weight:300px;
+      }
+
+      .p-datatable .p-datatable-tbody > tr:nth-child(odd) {
+        color: black;
+        font-size: 18px;
+      }
+      
+      .p-datatable .p-datatable-thead > tr > th .p-sortable-column-icon svg {
+        fill: white;
+      }
+      
+      .p-datatable .p-datatable-thead > tr > th .p-sortable-column-icon svg {
+        color: white;
+      }
+
+        .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+          background-image: linear-gradient(45deg, #FFA500, #f26411); 
           color: white;
-          font-family: 'Montserrat', sans-serif;
-          font-size: 14px;
+          outline: none;
+          border-radius: 25px;
+        }
+        .p-paginator .p-paginator-pages .p-paginator-page {
+          font-size: 18px;
+          padding: 5px;
+          border-radius: 4px;
         }
 
-        .p-datatable .p-datatable-thead > tr > th:hover {
-          background-color: black; /* Keep the background black on hover */
-        }
-
-        .p-datatable p-component p-paginator {
-          color: red;
-          background-color: black;
-
-        }
-       
       `}
     </style>
      </>
