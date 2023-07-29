@@ -225,7 +225,7 @@ const renderHeader = () => {
             onChange={onGlobalFilterChange}
             placeholder="Keyword Search"
             className="p-inputtext-sm"
-            style={{ fontFamily: 'Montserrat', color: 'black' }}
+            style={{ fontFamily: 'Helvetica Nueue', color: 'black' }}
           />
           <BsSearch />
           <i className="pi pi-search" style={{ color: 'black' }} />
@@ -566,7 +566,7 @@ const header = renderHeader();
                   paginator
                   rows={5}
                   rowsPerPageOptions={[5, 10, 25, 50]}
-                  tableStyle={{ minWidth: '50rem', fontFamily: 'Montserrat', fontSize: '16px', color: 'black', fontWeight: 200 }}
+                  tableStyle={{ minWidth: '50rem', fontFamily: 'Helvetica Nueue', fontSize: '16px', color: 'black', fontWeight: 200 }}
                   emptyMessage="No vehicles found."
                 >
                 {selectedColumns.includes('unique_id') && <Column field="unique_id" header="ID" style={{ width: '25%' }} sortable />}
@@ -713,12 +713,14 @@ const header = renderHeader();
       }
       
       ::-webkit-scrollbar-thumb {
-        background-color: #0521f7; /* Blueish Green color */
+        background-color: #fff; /* Blueish Green color */
         border-radius: 10px;
+        border: 0.1px solid black;
+        box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.3);
       }
       
       ::-webkit-scrollbar-thumb:hover {
-        background-color: #05f731; /* Darker shade on hover */
+        background-color: #fff; /* Darker shade on hover */
       }
       
       /* Styling the vertical scrollbar */
@@ -739,7 +741,7 @@ const header = renderHeader();
       }
       
       .p-selectbutton .p-button.p-highlight {
-        background-image: linear-gradient(45deg, #02f738, #00f5af); 
+        background-image: linear-gradient(45deg, #26f2fc, #05d1fa); 
         font-size: 16px;
         font-family: 'Helvetica Neue', sans-serif;
       
@@ -756,15 +758,16 @@ const header = renderHeader();
       }
 
       .p-datatable .p-datatable-tbody > tr:nth-child(even) {
-        background-color: #d65e02; 
-        color: white;
+        background-color: #f5f5f7;
+        color: black;
         font-size: 18px;
-        font-weight:300px;
-      }
+        font-weight: 600; /* Set font weight to 700 for bold text */
+    }
 
       .p-datatable .p-datatable-tbody > tr:nth-child(odd) {
         color: black;
         font-size: 18px;
+        font-weight: 600;
       }
       
       .p-datatable .p-datatable-thead > tr > th .p-sortable-column-icon svg {
