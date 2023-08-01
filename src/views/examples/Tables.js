@@ -209,9 +209,9 @@ const renderHeader = () => {
           onClick={clearFilter}
           className="p-button-sm p-button-text p-button-outlined button-transition"
           style={{
-            fontFamily: 'Helvetica Neue',
+            fontFamily: 'Roboto',
             borderRadius: '20px',
-            backgroundImage: 'linear-gradient(45deg, #26f2fc, #05d1fa)',
+            backgroundImage: 'linear-gradient(45deg, #FFA500, #f26411)',
             color: 'white',
             marginRight: '20px'
           }}
@@ -225,7 +225,7 @@ const renderHeader = () => {
             onChange={onGlobalFilterChange}
             placeholder="Keyword Search"
             className="p-inputtext-sm"
-            style={{ fontFamily: 'Helvetica Nueue', color: 'black' }}
+            style={{ fontFamily: 'Montserrat', color: 'black' }}
           />
           <BsSearch />
           <i className="pi pi-search" style={{ color: 'black' }} />
@@ -238,7 +238,7 @@ const renderHeader = () => {
           onClick={toggleColumnSelectionModal}
           className="p-button-sm p-button-text p-button-outlined button-transition"
           style={{
-            fontFamily: 'Helvetica Neue',
+            fontFamily: 'Roboto',
             color: 'black',
             borderColor: 'orange',
             backgroundColor: 'white',
@@ -566,10 +566,9 @@ const header = renderHeader();
                   paginator
                   rows={5}
                   rowsPerPageOptions={[5, 10, 25, 50]}
-                  tableStyle={{ minWidth: '50rem', fontFamily: 'Helvetica Nueue', fontSize: '16px', color: 'black', fontWeight: 200 }}
+                  tableStyle={{ minWidth: '50rem', color: 'black', fontWeight: 200 }}
                   emptyMessage="No vehicles found."
                 >
-                {selectedColumns.includes('unique_id') && <Column field="unique_id" header="ID" style={{ width: '25%' }} sortable />}
                     {selectedColumns.includes('id') && (
                       <Column
                         header="Vehicle Number"
@@ -741,18 +740,24 @@ const header = renderHeader();
       }
       
       .p-selectbutton .p-button.p-highlight {
-        background-image: linear-gradient(45deg, #26f2fc, #05d1fa); 
+        background-image: linear-gradient(45deg, #FFA500, #f26411); 
         font-size: 16px;
-        font-family: 'Helvetica Neue', sans-serif;
+        font-family: 'Roboto', sans-serif;
       
       }
+
+      .p-datatable .p-datatable-thead > tr > th,
+          .p-datatable .p-datatable-tbody > tr > td {
+            font-family: 'Montserrat', sans-serif;
+          }
 
       .p-datatable .p-datatable-thead > tr > th {
         position: sticky;
         top: 0;
         background-color: black; 
         color: white;
-        font-family: 'Helvetica Neue', sans-serif;
+        font-family: 'Montserrat', sans-serif;
+        text-transform: uppercase;
         font-size: 14px;
         transition: background-color 0.3s;
       }
@@ -760,14 +765,14 @@ const header = renderHeader();
       .p-datatable .p-datatable-tbody > tr:nth-child(even) {
         background-color: #f5f5f7;
         color: black;
-        font-size: 18px;
-        font-weight: 600; /* Set font weight to 700 for bold text */
+        font-size: 14px;
+        font-weight: 500; /* Set font weight to 700 for bold text */
     }
 
       .p-datatable .p-datatable-tbody > tr:nth-child(odd) {
         color: black;
-        font-size: 18px;
-        font-weight: 600;
+        font-size: 14px;
+        font-weight: 500;
       }
       
       .p-datatable .p-datatable-thead > tr > th .p-sortable-column-icon svg {
@@ -786,6 +791,7 @@ const header = renderHeader();
         }
         .p-paginator .p-paginator-pages .p-paginator-page {
           font-size: 18px;
+          font-weight: 600;
           padding: 5px;
           border-radius: 4px;
         }
