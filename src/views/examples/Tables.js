@@ -95,7 +95,7 @@ const Tables = () => {
     calculateTotals();
     fetchData();
     initFilters();
-  }, [data]);
+  }, []);
 
 
 
