@@ -61,6 +61,13 @@ const Tables = () => {
   const [totalDistance, setTotalDistance] = useState(0);
   const [totalMileage, setTotalMileage] = useState(0);
   const [totalFuelConsumed, setTotalFuelConsumed] = useState(0);
+  const [totalVehicles, setTotalVehicles] = useState(0); 
+
+  const [vehiclePercentage, setVehiclePercentage] = useState(0);
+const [distancePercentage, setDistancePercentage] = useState(0);
+const [fuelPercentage, setFuelPercentage] = useState(0);
+const [mileagePercentage, setMileagePercentage] = useState(0);
+
 
   const [selectedColumns, setSelectedColumns] = useState([
     'unique_id',
@@ -81,24 +88,49 @@ const Tables = () => {
       let mileageSum = 0;
       let fuelConsumedSum = 0;
 
-      data.forEach((item) => {
-        distanceSum += item.distance;
-        mileageSum += item.mileage;
-        fuelConsumedSum += item.fuelLitre;
-      });
+      // Find the first start_time
+      const firstStartTime = data.length > 0 ? data[0].start_time : null;
+      console.log("first time ", firstStartTime);
 
-      setTotalDistance(distanceSum.toFixed(2)); 
-      setTotalMileage(mileageSum.toFixed(2)); 
-      setTotalFuelConsumed(fuelConsumedSum.toFixed(2));
-    };
+       if (firstStartTime) {
+    // Extract the date part (dd/mm/yy) from the first start_time
+    const firstStartDate = new Date(firstStartTime).toLocaleDateString();
+    console.log("firstStartDate", firstStartDate);
+
+    // Filter the data array for the same date (dd/mm/yy) as the first start_time
+    const vehiclesWithSameDate = data.filter(
+      item => new Date(item.start_time).toLocaleDateString() === firstStartDate
+    );
+
+    vehiclesWithSameDate.forEach((item) => {
+      distanceSum += item.distance;
+      mileageSum += item.mileage;
+      fuelConsumedSum += item.fuelLitre;
+    });
+
+    setTotalDistance(distanceSum.toFixed(2));
+    setTotalMileage(mileageSum.toFixed(2));
+    setTotalFuelConsumed(fuelConsumedSum.toFixed(2));
+    setTotalVehicles(vehiclesWithSameDate.length); // Set the total number of vehicles
+
+    // Calculate percentages
+    const totalVehiclesPercentage = (vehiclesWithSameDate.length / data.length) * 100;
+    const totalDistancePercentage = (distanceSum / totalDistance) * 100;
+    const totalFuelPercentage = (fuelConsumedSum / totalFuelConsumed) * 100;
+    const totalMileagePercentage = (mileageSum / totalMileage) * 100;
+
+    setVehiclePercentage(totalVehiclesPercentage.toFixed(2));
+    setDistancePercentage(totalDistancePercentage.toFixed(2));
+    setFuelPercentage(totalFuelPercentage.toFixed(2));
+    setMileagePercentage(totalMileagePercentage.toFixed(2));
+  }
+};
 
     calculateTotals();
     fetchData();
     initFilters();
   }, []);
-
-
-
+  
   const { id } = useParams();
   
 
@@ -420,10 +452,15 @@ const header = renderHeader();
                 <CardBody >
                   <div className="row align-items-center" >
                     <div className="col-lg-8 col-sm-8" style={{ marginBottom: '-30px', marginTop: '-20px', }}>
-                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-20px' }}>Total Vehicles</h4>
-                      <h4 style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-10px' }}>
-                        {totalTravelLogs}
-                      </h4>
+                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-15px', marginRight: '-15px' }}>Total Vehicles</h4>
+                      <div className="col-lg-8 col-sm-8" style={{ marginBottom: '5px', marginTop: '5px' }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                          <span style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-25px',marginRight: '-50px' }}>
+                            <h4>{totalVehicles} <span style={{color: "#09db10", marginLeft: '5px'}}>{vehiclePercentage}%</span></h4>
+                            </span>
+                           
+                          </div>
+                        </div>
                     </div>
                     <div className="col-4">
                       <span
@@ -445,14 +482,20 @@ const header = renderHeader();
               </Col>
               <Col>
               {/* Card for Total Distance */}
-              <Card className="p-1 mb-4" style={{ fontSize: '10px', borderRadius: '15px', display: 'flex', alignItems: 'center', width: '300px', marginLeft: -175, marginTop: 8, boxShadow: '15px 15px 30px #cbcbcb, -15px -15px 30px #ffffff' }}>
+              <Card className="p-1 mb-4" style={{ fontSize: '10px', borderRadius: '15px', display: 'flex', alignItems: 'center', width: '320px', marginLeft: -175, marginTop: 8, boxShadow: '15px 15px 30px #cbcbcb, -15px -15px 30px #ffffff' }}>
                 <CardBody>
                   <div className="row align-items-center">
                     <div className="col-lg-8 col-sm-8" style={{ marginBottom: '-30px', marginTop: '-20px' }}>
-                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '0px', marginLeft: '-20px' }}>Total Distance Covered</h4>
-                      <h4 style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-10px' }}>
-                        {totalDistance} km
-                      </h4>
+                    <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-20px', marginRight: '-15px' }}>Total Distance Covered</h4>
+                      <div className="col-lg-8 col-sm-8" style={{ marginBottom: '5px', marginTop: '5px' }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                          <span style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-35px',marginRight: '-50px' }}>
+                            <h4>{totalDistance} km <span style={{color: "#09db10", marginLeft: '2px'}}>{distancePercentage}%</span></h4>
+                            </span>
+                           
+                          </div>
+                        </div>
+
                     </div>
                     <div className="col-4">
                       <span
@@ -480,10 +523,17 @@ const header = renderHeader();
                 <CardBody>
                   <div className="row align-items-center">
                     <div className="col-lg-8 col-sm-8" style={{ marginBottom: '-30px', marginTop: '-20px' }}>
-                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-20px' }}>Total Mileage Covered</h4>
-                      <h4 style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-10px' }}>
-                        {totalMileage} km/L
-                      </h4>
+                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-15px', marginRight: '-15px' }}>Total Mileage Covered</h4>
+                      <div className="col-lg-8 col-sm-8" style={{ marginBottom: '5px', marginTop: '5px' }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                            <span style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-25px',marginRight: '-50px' }}>
+                            <h4>{totalMileage} km/L <span style={{color: "#09db10", marginLeft: '5px'}}>{mileagePercentage}%</span></h4>
+                            </span>
+                           
+                          </div>
+                        </div>
+
+
                     </div>
                     <div className="col-4">
                       <span
@@ -510,10 +560,17 @@ const header = renderHeader();
                 <CardBody>
                   <div className="row align-items-center">
                     <div className="col-lg-8 col-sm-8" style={{ marginBottom: '-30px', marginTop: '-20px' }}>
-                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-20px' }}>Total Fuel Consumed</h4>
-                      <h4 style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-10px' }}>
-                        {totalFuelConsumed} L
-                      </h4>
+                    <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-15px', marginRight: '-15px' }}>Total Fuel Consumed</h4>
+                      <div className="col-lg-8 col-sm-8" style={{ marginBottom: '5px', marginTop: '5px' }}>
+                          <div style={{ display: 'flex', alignItems: 'baseline' }}>
+                            <span style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-25px',marginRight: '-50px' }}>
+                            <h4>{totalFuelConsumed} L <span style={{color: "#09db10", marginLeft: '5px'}}>{fuelPercentage}%</span></h4>
+                            </span>
+                           
+                          </div>
+                        </div>
+                      
+
                     </div>
                     <div className="col-4">
                       <span
