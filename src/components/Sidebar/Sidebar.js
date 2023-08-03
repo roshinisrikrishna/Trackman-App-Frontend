@@ -1,26 +1,8 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.3
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-/*eslint-disable*/
-import React from 'react';
-import { useState } from "react";
+import React, { useState } from "react";
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
+import SidebarItem from "./SidebarItem.js";
 
 // reactstrap components
 import {
@@ -55,8 +37,12 @@ import {
 
 var ps;
 
+
+
 const Sidebar = (props) => {
   const [collapseOpen, setCollapseOpen] = useState();
+  const [dashboardOpen, setDashboardOpen] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
   // verifies if routeName is the one active (in browser input)
   const activeRoute = (routeName) => {
     return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
@@ -71,67 +57,24 @@ const Sidebar = (props) => {
   };
   // creates the links that appear in the left menu / Sidebar
   const createLinks = (routes) => {
-    const [dashboardOpen, setDashboardOpen] = React.useState(false);
-    const [authOpen, setAuthOpen] = React.useState(false);
-  
-    const toggleDashboard = () => {
-      setDashboardOpen(!dashboardOpen);
-    };
-  
-    const toggleAuth = () => {
-      setAuthOpen(!authOpen);
-    };
-  
-    return routes.map((prop, key) => {
-      if (prop.children) {
-        // If the route has children, it should be a dropdown
-        return (
-          <NavItem key={key}>
-            <NavLink
-              to="#"
-              onClick={prop.name === 'Dashboard' ? toggleDashboard : toggleAuth}
-            >
-              <i className={prop.icon} />
-              {prop.name}
-            </NavLink>
-            <Collapse isOpen={prop.name === 'Dashboard' ? dashboardOpen : authOpen}>
-              <Nav className="nav-sm flex-column">
-                {prop.children.map((childProp, childKey) => (
-                  <NavItem key={childKey}>
-                    <NavLink
-                      to={childProp.layout + childProp.path}
-                      tag={NavLinkRRD}
-                      onClick={closeCollapse}
-                    >
-                      <i className={childProp.icon} />
-                      {childProp.name}
-                    </NavLink>
-                  </NavItem>
-                ))}
-              </Nav>
-            </Collapse>
-          </NavItem>
-        );
-      } else {
-        // Regular single link
-        return (
-          <NavItem key={key}>
-            <NavLink
-              to={prop.layout + prop.path}
-              tag={NavLinkRRD}
-              onClick={closeCollapse}
-            >
-              <span className="icon-style">
-                  <i className={prop.icon}  />
-                </span>             
-                 {prop.name}
-            </NavLink>
-          </NavItem>
-        );
-      }
-    });
+    console.log("routes at sidebar ",routes);
+    return (
+      <div >
+        {console.log("items at sidebar ",routes)}
+        { routes.map((item, index) => <SidebarItem key={index} item={item} />) }
+      </div>
+  )
+    // return routes.map((prop, key) => (
+    //   <NavItem key={key}>
+    //     <NavLink to={prop.layout + prop.path} tag={NavLinkRRD} onClick={closeCollapse}>
+    //       <span className="icon-style">
+    //         <i className={prop.icon} />
+    //       </span>
+    //       {prop.name}
+    //     </NavLink>
+    //   </NavItem>
+    // ));
   };
-  
 
   const { bgColor, routes, logo } = props;
   let navbarBrandProps;
