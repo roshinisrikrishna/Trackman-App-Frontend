@@ -1,0 +1,51 @@
+import Index from "views/Index.js";
+import Profile from "views/examples/Profile.js";
+import Tables from "views/examples/Tables.js";
+import Icons from "views/examples/Icons.js";
+import * as RiIcons from 'react-icons/ri';
+
+var routes = [
+  {
+      name: "Dashboard",
+      icon: "ni ni-tv-2 ",   
+    childrens: [
+      {
+        path: "/home", // Root path for the parent layout
+        name: "Home",
+        icon: "ni ni-tv-2 ",
+        component: <Index />,
+        layout: "/admin",
+      },
+      {
+        path: "/user-profile", // Absolute path for the child route starting with "/"
+        name: "User Profile",
+        icon: "ni ni-single-02 ",
+        component: <Profile />,
+        layout: "/admin",
+      },
+      {
+        path: "/tables", // Absolute path for the child route starting with "/"
+        name: "Travel Logs",
+        icon: "ni ni-bullet-list-67 ",
+        component: <Tables />,
+        layout: "/admin",
+      }
+    ]
+  },
+  {
+    path: "/auth", // Root path for the parent layout
+    name: "Login",
+    icon: "ni ni-key-25 ",
+    component: <Login />,
+    layout: "/auth",
+  },
+  {
+    path: "/auth", // Root path for the parent layout
+    name: "Register",
+    icon: "ni ni-circle-08 ",
+    component: <Register />,
+    layout: "/auth",
+  },
+];
+
+export default routes;

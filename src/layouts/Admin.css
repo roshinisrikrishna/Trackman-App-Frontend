@@ -1,0 +1,29 @@
+.admin-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  .admin-wrapper .main-content {
+    flex: 1;
+  }
+  
+  .admin-wrapper .content-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 60px); /* Adjust this value according to your footer height */
+  }
+  
+  .admin-wrapper .content-wrapper .content-container {
+    flex: 1;
+    padding-bottom: 60px; /* Set the padding-bottom to the height of the footer */
+  }
+  
+  .admin-wrapper .content-wrapper .routes-container {
+    padding: 20px;
+  }
+  
+  .admin-wrapper .admin-footer {
+    flex-shrink: 0;
+  }
+  
