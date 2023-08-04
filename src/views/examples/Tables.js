@@ -83,53 +83,56 @@ const [mileagePercentage, setMileagePercentage] = useState(0);
   ]);
 
   useEffect(() => {
-    const calculateTotals = () => {
-      let distanceSum = 0;
-      let mileageSum = 0;
-      let fuelConsumedSum = 0;
-
-      // Find the first start_time
-      const firstStartTime = data.length > 0 ? data[0].start_time : null;
-      console.log("first time ", firstStartTime);
-
-       if (firstStartTime) {
-    // Extract the date part (dd/mm/yy) from the first start_time
-    const firstStartDate = new Date(firstStartTime).toLocaleDateString();
-    console.log("firstStartDate", firstStartDate);
-
-    // Filter the data array for the same date (dd/mm/yy) as the first start_time
-    const vehiclesWithSameDate = data.filter(
-      item => new Date(item.start_time).toLocaleDateString() === firstStartDate
-    );
-
-    vehiclesWithSameDate.forEach((item) => {
-      distanceSum += item.distance;
-      mileageSum += item.mileage;
-      fuelConsumedSum += item.fuelLitre;
-    });
-
-    setTotalDistance(distanceSum.toFixed(2));
-    setTotalMileage(mileageSum.toFixed(2));
-    setTotalFuelConsumed(fuelConsumedSum.toFixed(2));
-    setTotalVehicles(vehiclesWithSameDate.length); // Set the total number of vehicles
-
-    // Calculate percentages
-    const totalVehiclesPercentage = (vehiclesWithSameDate.length / data.length) * 100;
-    const totalDistancePercentage = (distanceSum / totalDistance) * 100;
-    const totalFuelPercentage = (fuelConsumedSum / totalFuelConsumed) * 100;
-    const totalMileagePercentage = (mileageSum / totalMileage) * 100;
-
-    setVehiclePercentage(totalVehiclesPercentage.toFixed(2));
-    setDistancePercentage(totalDistancePercentage.toFixed(2));
-    setFuelPercentage(totalFuelPercentage.toFixed(2));
-    setMileagePercentage(totalMileagePercentage.toFixed(2));
-  }
-};
-
-    calculateTotals();
     fetchData();
     initFilters();
   }, []);
+
+  const calculateTotals = (data) => {
+
+    console.log('getting into calculateTotals useEffect function Tables')
+
+    let distanceSum = 0;
+    let mileageSum = 0;
+    let fuelConsumedSum = 0;
+
+    // Find the first start_time
+    const firstStartTime = data.length > 0 ? data[0].start_time : null;
+    console.log("first time ", firstStartTime);
+
+     if (firstStartTime) {
+  // Extract the date part (dd/mm/yy) from the first start_time
+  const firstStartDate = new Date(firstStartTime).toLocaleDateString();
+  console.log("firstStartDate", firstStartDate);
+
+  // Filter the data array for the same date (dd/mm/yy) as the first start_time
+  const vehiclesWithSameDate = data.filter(
+    item => new Date(item.start_time).toLocaleDateString() === firstStartDate
+  );
+
+  vehiclesWithSameDate.forEach((item) => {
+    distanceSum += item.distance;
+    mileageSum += item.mileage;
+    fuelConsumedSum += item.fuelLitre;
+  });
+
+  setTotalDistance(distanceSum.toFixed(2));
+  setTotalMileage(mileageSum.toFixed(2));
+  setTotalFuelConsumed(fuelConsumedSum.toFixed(2));
+  setTotalVehicles(vehiclesWithSameDate.length); // Set the total number of vehicles
+
+  // Calculate percentages
+  const totalVehiclesPercentage = (vehiclesWithSameDate.length / data.length) * 100;
+  const totalDistancePercentage = (distanceSum / totalDistance) * 100;
+  const totalFuelPercentage = (fuelConsumedSum / totalFuelConsumed) * 100;
+  const totalMileagePercentage = (mileageSum / totalMileage) * 100;
+
+  setVehiclePercentage(totalVehiclesPercentage.toFixed(2));
+  setDistancePercentage(totalDistancePercentage.toFixed(2));
+  setFuelPercentage(totalFuelPercentage.toFixed(2));
+  setMileagePercentage(totalMileagePercentage.toFixed(2));
+}
+  };
+
   
   const { id } = useParams();
   
@@ -414,29 +417,25 @@ const header = renderHeader();
 
   const fetchData = async () => {
     try {
-      console.log('entered fetch data function ');
       const TRAVEL_URL = `http://localhost:5000/travel/admin`;
       const response = await axios.get(TRAVEL_URL); // Replace with your API endpoint
       const responseData = response.data;
-  
+
       // Parse the date strings to Date objects
-      const parsedData = responseData.map((item) => {
-        return {
-          ...item,
-          start_time: new Date(item.start_time),
-          end_time: new Date(item.end_time),
-        };
-      });
-  
-      console.log("Data Type of 'Start Time':", typeof parsedData[0].start_time);
-      console.log("Data Type of 'End Time':", typeof parsedData[0].end_time);
-  
+      const parsedData = responseData.map((item) => ({
+        ...item,
+        start_time: new Date(item.start_time),
+        end_time: new Date(item.end_time),
+      }));
+
+      console.log("called fetch data function");
+
       setData(parsedData);
       setLoading(false);
       setTotalTravelLogs(parsedData.length);
-
+      calculateTotals(parsedData); // Call calculateTotals after fetching data
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
   
