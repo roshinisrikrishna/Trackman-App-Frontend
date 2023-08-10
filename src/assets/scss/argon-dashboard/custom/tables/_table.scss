@@ -5,6 +5,11 @@
 
 // General styles
 /* Styles for customizing the scrollbar */
+
+.table-wrapper {
+    overflow-y: hidden;
+  }
+  
 .table-wrapper::-webkit-scrollbar {
     width: 5px;
     height: 8px; /* Set the width of the scrollbar */

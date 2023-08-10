@@ -77,8 +77,8 @@ const Sidebar = (props) => {
               tag="li"
               onClick={() => toggleDropdown(route.name)}
             >
-              <span style={{ marginLeft: '-25px',backgroundColor: 'rgb(255, 255, 255)', color: '#363535', fontWeight: '600', fontSize: '16px' ,boxShadow: '5px 5px 10px rgba(163,177,198,0.5), -5px -5px 10px rgba(255, 255, 255, 0.6)', padding: '15px', display: 'inline-block', paddingRight: '70px', paddingLeft: '15px', borderRadius: '10px' }}>
-                  <div style={{ marginRight: '15px' ,backgroundColor: '#fc3c30', padding: '10px', borderRadius: '10px', display: 'inline-block', color: '#fff' }}>
+              <span style={{ marginLeft: '-25px',backgroundColor: 'rgb(255, 255, 255)', color: '#363535', fontWeight: '600', fontSize: '16px' ,boxShadow: '5px 5px 10px rgba(163,177,198,0.5), -5px -5px 10px rgba(255, 255, 255, 0.6)', padding: '12px', display: 'inline-block', paddingRight: '80px', paddingLeft: '15px', borderRadius: '10px' }}>
+                  <div style={{ marginRight: '15px' ,backgroundColor: '#fc3c30', padding: '7px', borderRadius: '10px', display: 'inline-block', color: '#fff' }}>
                   <i className={route.icon} />
                   </div>
                   {/* <div style={{ marginLeft: '1px' }}> */}

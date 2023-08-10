@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from "react"
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 import { NavItem, NavLink } from "reactstrap";
@@ -47,38 +46,3 @@ const SidebarItem = ({item}) =>{
 }
 
 export default SidebarItem;
-=======
-import React, { useState } from "react"
-
-const SidebarItem = ({item}) =>{
-    const [open, setOpen] = useState(false)
-
-    console.log("item at sidebaritem ",item);
-    
-    if(item.childrens){
-        return (
-            <div className={open ? "sidebar-item open" : "sidebar-item"}>
-                <div>
-                    <span>
-                        { item.icon && <i className={item.icon}></i> }
-                        {item.name}    
-                    </span> 
-                    <i  onClick={() => setOpen(!open)}></i>
-                </div>
-                <div>
-                    { item.childrens.map((child, index) => <SidebarItem key={index} item={child} />) }
-                </div>
-            </div>
-        )
-    }else{
-        return (
-            <a href={item.path || "#"}>
-                { item.icon && <i className={item.icon}></i> }
-                {item.name}
-            </a>
-        );
-    }
-}
-
-export default SidebarItem;
->>>>>>> 37fc401e44746d29e193115e6755e4e61b812968

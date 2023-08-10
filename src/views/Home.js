@@ -4,6 +4,7 @@ import {
   CardBody,
   CardHeader,
   CardFooter,
+  Col,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
@@ -45,6 +46,7 @@ import { useNavigate } from 'react-router-dom';
 import { classNames } from 'primereact/utils';
 import { Dropdown } from 'primereact/dropdown';
 import { HiUsers } from "react-icons/hi2";
+import CardComponent from "./examples/CardComponent";
 
 
 const Home = () => {
@@ -72,6 +74,7 @@ const Home = () => {
 
 
   useEffect(() => {
+    console.log("getting into useEffect function at home")
     loadData();
     initFilters();
   }, []);
@@ -332,37 +335,24 @@ const actionsBodyTemplate = (rowData) =>{
   
   return (
     <>
-      <Container className="mt-4" style={{ maxWidth: '900px' }}>
+
+        <Container className="mt-4" style={{ maxWidth: '300px' }}>
+            <Row>
+            <Col>
+            <CardComponent
+                    title="Total Users"
+                    value={data.length}
+                    percentage={100}
+                    icon={<HiUsers style={{ color: 'white', fontSize: 30 }} />}
+                  />
+            </Col>
+            </Row>
+          
+        </Container>
+      <Container className="mt-4" style={{ maxWidth: '800px' }}>
         <Row>
           <div className="col">
-            <div className="col-lg-3 col-sm-3">
-              
-            <Card className="shadow p-1 mb-4" style={{ fontSize: '10px', borderRadius: '15px', display: 'flex', alignItems: 'center' }}>
-              <CardBody>
-                <div className="row align-items-center">
-                  <div className="col-lg-8 col-sm-8" style={{ marginBottom: '-30px', marginTop: '-20px' }}>
-                    <h4 className="mb-2" style={{ color: "#7d7d7d" ,fontWeight: 600,textAlign: 'left', marginBottom: '-10px', marginLeft: '-20px' }}>Total Users</h4>
-                    <h4 style={{ fontWeight: 700, fontSize: 22,  marginTop: '-5px', marginLeft: '-10px' }}>
-                      {data.length}
-                    </h4>
-                  </div>
-                  <div className="col-4">
-                    <span
-                      style={{
-                        backgroundImage: 'linear-gradient(45deg, #FFA500, #FF4500)',
-                        padding: '15px',
-                        marginLeft: '-20px',
-                        marginRight: '55px',
-                        borderRadius: '10px',
-                      }}
-                    >
-                      <HiUsers style={{ color: 'white', fontSize: 30 }} />
-                    </span>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-            </div>
+         
 
             <Card className="shadow">
               <CardHeader >

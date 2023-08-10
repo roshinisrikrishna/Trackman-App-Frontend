@@ -35,20 +35,27 @@ var routes = [
      
     ]
   },
-  {
-    path: "/login", // Root path for the parent layout
-    name: "Login",
-    icon: "ni ni-key-25 ",
-    component: <Login />,
-    layout: "/auth",
-  },
-  {
-    path: "/register", // Root path for the parent layout
-    name: "Register",
-    icon: "ni ni-circle-08 ",
-    component: <Register />,
-    layout: "/auth",
-  },
+  // {
+  //   name: "Authentication",
+  //     icon: "ni ni-tv-2 ",   
+  //   childrens: [
+      {
+        path: "/login", // Root path for the parent layout
+        name: "Login",
+        icon: "ni ni-key-25 ",
+        component: <Login />,
+        layout: "/auth",
+      },
+      {
+        path: "/register", // Root path for the parent layout
+        name: "Register",
+        icon: "ni ni-circle-08 ",
+        component: <Register />,
+        layout: "/auth",
+      },
+  //   ]
+  // }
+  
 ];
 
 export default routes;

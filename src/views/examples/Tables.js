@@ -44,6 +44,8 @@ import { HiUsers } from "react-icons/hi2";
 import { GiPathDistance } from "react-icons/gi";
 import { MdGasMeter } from "react-icons/md";
 import { BsFillFuelPumpDieselFill } from "react-icons/bs";
+import GraphCard from "views/GraphCard";
+import CardComponent from "./CardComponent";
 
 
 const Tables = () => {
@@ -57,10 +59,23 @@ const Tables = () => {
     { label: 'L', value: 'large' }
   ]);
   const [size, setSize] = useState(sizeOptions[1].value);
+
   const [totalTravelLogs, setTotalTravelLogs] = useState(0);
-  const [totalDistance, setTotalDistance] = useState(0);
-  const [totalMileage, setTotalMileage] = useState(0);
-  const [totalFuelConsumed, setTotalFuelConsumed] = useState(0);
+const [totalDistance, setTotalDistance] = useState(0);
+const [totalMileage, setTotalMileage] = useState(0);
+const [totalFuelConsumed, setTotalFuelConsumed] = useState(0);
+const [totalVehicles, setTotalVehicles] = useState(0); 
+
+const [vehiclePercentage, setVehiclePercentage] = useState(0);
+const [distancePercentage, setDistancePercentage] = useState(0);
+const [fuelPercentage, setFuelPercentage] = useState(0);
+const [mileagePercentage, setMileagePercentage] = useState(0);
+
+const [vehicleWithSameStartTimeDistance, setVehicleWithSameStartTimeDistance] = useState(0);
+const [vehicleWithSameStartTimeMileage, setVehicleWithSameStartTimeMileage] = useState(0);
+const [vehicleWithSameStartTimeFuelConsumed, setVehicleWithSameStartTimeFuelConsumed] = useState(0);
+const [vehiclesWithSameStartTime, setVehiclesWithSameStartTime] = useState(0); 
+
 
   const [selectedColumns, setSelectedColumns] = useState([
     'unique_id',
@@ -76,29 +91,80 @@ const Tables = () => {
   ]);
 
   useEffect(() => {
-    const calculateTotals = () => {
-      let distanceSum = 0;
-      let mileageSum = 0;
-      let fuelConsumedSum = 0;
-
-      data.forEach((item) => {
-        distanceSum += item.distance;
-        mileageSum += item.mileage;
-        fuelConsumedSum += item.fuelLitre;
-      });
-
-      setTotalDistance(distanceSum.toFixed(2)); 
-      setTotalMileage(mileageSum.toFixed(2)); 
-      setTotalFuelConsumed(fuelConsumedSum.toFixed(2));
-    };
-
-    calculateTotals();
     fetchData();
     initFilters();
   }, []);
 
+  const calculateTotals = (data) => {
+
+    console.log('getting into calculateTotals useEffect function Tables')
+
+    let distanceSum = 0;
+    let mileageSum = 0;
+    let fuelConsumedSum = 0;
+
+    data.forEach((item) => {
+      distanceSum += item.distance;
+      mileageSum += item.mileage;
+      fuelConsumedSum += item.fuelLitre;
+    });
+
+    setTotalDistance(distanceSum.toFixed(2));
+    setTotalMileage(mileageSum.toFixed(2));
+    setTotalFuelConsumed(fuelConsumedSum.toFixed(2));
+    setTotalVehicles(data.length);
+
+    
+
+    // Find the first start_time
+    const firstStartTime = data.length > 0 ? data[0].start_time : null;
+    console.log("first time ", firstStartTime);
+
+     if (firstStartTime) {
+
+      distanceSum = 0;
+    mileageSum = 0;
+    fuelConsumedSum = 0;
+  // Extract the date part (dd/mm/yy) from the first start_time
+  const firstStartDate = new Date(firstStartTime).toLocaleDateString();
+  console.log("firstStartDate", firstStartDate);
+
+  // Filter the data array for the same date (dd/mm/yy) as the first start_time
+  const vehiclesWithSameDate = data.filter(
+    item => new Date(item.start_time).toLocaleDateString() === firstStartDate
+  );
+
+  vehiclesWithSameDate.forEach((item) => {
+    distanceSum += item.distance;
+    mileageSum += item.mileage;
+    fuelConsumedSum += item.fuelLitre;
+  });
+
+  setVehicleWithSameStartTimeDistance(distanceSum.toFixed(2));
+  setVehicleWithSameStartTimeMileage(mileageSum.toFixed(2));
+  setVehicleWithSameStartTimeFuelConsumed(fuelConsumedSum.toFixed(2));
+  setVehiclesWithSameStartTime(vehiclesWithSameDate.length); // Set the total number of vehicles
+
+  // Calculate percentages
+  const totalVehiclesPercentage = (vehiclesWithSameDate.length / data.length) * 100;
+  const totalDistancePercentage = (distanceSum / totalDistance) * 100;
+  const totalFuelPercentage = (fuelConsumedSum / totalFuelConsumed) * 100;
+  const totalMileagePercentage = (mileageSum / totalMileage) * 100;
+
+  setVehiclePercentage(totalVehiclesPercentage.toFixed(2));
+  setDistancePercentage(totalDistancePercentage.toFixed(2));
+  setFuelPercentage(totalFuelPercentage.toFixed(2));
+  setMileagePercentage(totalMileagePercentage.toFixed(2));
+
+  console.log("total distance start distance ",totalDistance,vehicleWithSameStartTimeDistance);
+  console.log("total mileage start mileage ",totalMileage,vehicleWithSameStartTimeMileage);
+  console.log("total fuel start fuel ",totalFuelConsumed,vehicleWithSameStartTimeFuelConsumed);
 
 
+}
+  };
+
+  
   const { id } = useParams();
   
 
@@ -378,175 +444,89 @@ const balanceFilterTemplate = (options) => {
 
 const header = renderHeader();
 
-  console.log('data ', data);
+  console.log('data at Tables', data);
 
   const fetchData = async () => {
     try {
-      console.log('entered fetch data function ');
       const TRAVEL_URL = `http://localhost:5000/travel/admin`;
       const response = await axios.get(TRAVEL_URL); // Replace with your API endpoint
       const responseData = response.data;
-  
+
       // Parse the date strings to Date objects
-      const parsedData = responseData.map((item) => {
-        return {
-          ...item,
-          start_time: new Date(item.start_time),
-          end_time: new Date(item.end_time),
-        };
-      });
-  
-      console.log("Data Type of 'Start Time':", typeof parsedData[0].start_time);
-      console.log("Data Type of 'End Time':", typeof parsedData[0].end_time);
-  
+      const parsedData = responseData.map((item) => ({
+        ...item,
+        start_time: new Date(item.start_time),
+        end_time: new Date(item.end_time),
+      }));
+
+      console.log("called fetch data function");
+
       setData(parsedData);
       setLoading(false);
       setTotalTravelLogs(parsedData.length);
-
+      calculateTotals(parsedData); // Call calculateTotals after fetching data
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
   
   return (
     <>
-      <Container className="mt-5" style={{ maxWidth: '800px' }}>
-        {/* <div className="col">
-            <div className="col-lg-6 col-sm-6"> */}
-              <Row>
-              <Col>
-              {/* Card for Total Vehicles */}
-              <Card className="p-1 mb-4 mt-2" style={{ fontSize: '10px', borderRadius: '15px', display: 'flex', alignItems: 'center', width: '200px', boxShadow: '15px 15px 30px #cbcbcb, -15px -15px 30px #ffffff' }}>
-                <CardBody >
-                  <div className="row align-items-center" >
-                    <div className="col-lg-8 col-sm-8" style={{ marginBottom: '-30px', marginTop: '-20px', }}>
-                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-20px' }}>Total Vehicles</h4>
-                      <h4 style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-10px' }}>
-                        {totalTravelLogs}
-                      </h4>
-                    </div>
-                    <div className="col-4">
-                      <span
-                        style={{
-                          backgroundImage: 'linear-gradient(45deg, #FFA500, #FF4500)',
-                          padding: '15px',
-                          marginLeft: '-20px',
-                          borderRadius: '10px',
-                          boxShadow: '3px 3px 8px #cbcbcb, -3px -3px 8px #ffffff'
+          <Container className="mt-5" style={{ maxWidth: '800px' }}>
+          <Row>
 
-                        }}
-                      >
-                        <HiUsers style={{ color: 'white', fontSize: 30 }} />
-                      </span>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
-              </Col>
-              <Col>
-              {/* Card for Total Distance */}
-              <Card className="p-1 mb-4" style={{ fontSize: '10px', borderRadius: '15px', display: 'flex', alignItems: 'center', width: '300px', marginLeft: -175, marginTop: 8, boxShadow: '15px 15px 30px #cbcbcb, -15px -15px 30px #ffffff' }}>
-                <CardBody>
-                  <div className="row align-items-center">
-                    <div className="col-lg-8 col-sm-8" style={{ marginBottom: '-30px', marginTop: '-20px' }}>
-                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '0px', marginLeft: '-20px' }}>Total Distance Covered</h4>
-                      <h4 style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-10px' }}>
-                        {totalDistance} km
-                      </h4>
-                    </div>
-                    <div className="col-4">
-                      <span
-                        style={{
-                          backgroundImage: 'linear-gradient(45deg, #FFA500, #FF4500)',
-                          padding: '15px',
-                          marginRight: '-1px',
-                          borderRadius: '10px',
-                          boxShadow: '3px 3px 8px #cbcbcb, -3px -3px 8px #ffffff'
-                        }}
-                      >
-                        {/* Icon for Total Distance */}
-                        <GiPathDistance style={{ color: 'white', fontSize: 30 }} />
-                      </span>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
-              </Col>
-              </Row>
-              {/* Card for Total Mileage */}
-              <Row>
-                <Col>
-                  <Card className="p-1 mb-4" style={{ fontSize: '10px', borderRadius: '15px', display: 'flex', alignItems: 'center', width: '280px', boxShadow: '15px 15px 30px #cbcbcb, -15px -15px 30px #ffffff' }}>
-                <CardBody>
-                  <div className="row align-items-center">
-                    <div className="col-lg-8 col-sm-8" style={{ marginBottom: '-30px', marginTop: '-20px' }}>
-                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-20px' }}>Total Mileage Covered</h4>
-                      <h4 style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-10px' }}>
-                        {totalMileage} km/L
-                      </h4>
-                    </div>
-                    <div className="col-4">
-                      <span
-                        style={{
-                          backgroundImage: 'linear-gradient(45deg, #FFA500, #FF4500)',
-                          padding: '15px',
-                          marginRight: '-1px',
-                          borderRadius: '10px',
-                          boxShadow: '3px 3px 8px #cbcbcb, -3px -3px 8px #ffffff'
+          <Col>
+          <CardComponent
+            title="Total Vehicles"
+            value={vehiclesWithSameStartTime}
+            percentage={vehiclePercentage}
+            icon={<HiUsers style={{ color: 'white', fontSize: 30 }} />}
+          />
+        </Col>
 
-                        }}
-                      >
-                        {/* Icon for Total Mileage */}
-                        <MdGasMeter style={{ color: 'white', fontSize: 30 }} />
-                      </span>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
-              </Col>
-              <Col>
-              {/* Card for Total Fuel Consumed */}
-              <Card className="p-1 mb-4" style={{ fontSize: '10px', borderRadius: '15px', display: 'flex', alignItems: 'center', width: '270px', marginLeft: -95, boxShadow: '15px 15px 30px #cbcbcb, -15px -15px 30px #ffffff' }}>
-                <CardBody>
-                  <div className="row align-items-center">
-                    <div className="col-lg-8 col-sm-8" style={{ marginBottom: '-30px', marginTop: '-20px' }}>
-                      <h4 className="mb-2" style={{ color: "#7d7d7d", fontWeight: 600, textAlign: 'left', marginBottom: '-10px', marginLeft: '-20px' }}>Total Fuel Consumed</h4>
-                      <h4 style={{ fontWeight: 700, fontSize: 18, marginTop: '-5px', marginLeft: '-10px' }}>
-                        {totalFuelConsumed} L
-                      </h4>
-                    </div>
-                    <div className="col-4">
-                      <span
-                        style={{
-                          backgroundImage: 'linear-gradient(45deg, #FFA500, #FF4500)',
-                          padding: '15px',
-                          marginRight: '5px',
-                          borderRadius: '10px',
-                          boxShadow: '3px 3px 8px #cbcbcb, -3px -3px 8px #ffffff'
+        <Col>
+          <CardComponent
+            title="Total Distance Covered"
+            value={vehicleWithSameStartTimeDistance}
+            percentage={distancePercentage}
+            icon={<GiPathDistance style={{ color: 'white', fontSize: 30 }} />}
+          />
+        </Col>
 
-                        }}
-                      >
-                        {/* Icon for Total Fuel Consumed */}
-                        <BsFillFuelPumpDieselFill style={{ color: 'white', fontSize: 30 }} />
-                      </span>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-            {/* </div> */}
-            </Row>
-      </Container>
-      <Container className="mt-4" style={{ maxWidth: '1200px' }}>
+          
+          </Row>
+          <Row>
+          <Col>
+          <CardComponent
+            title="Total Mileage Covered"
+            value={vehicleWithSameStartTimeMileage}
+            percentage={mileagePercentage}
+            icon={<MdGasMeter style={{ color: 'white', fontSize: 30 }} />}
+          />
+        </Col>
+        <Col>
+          <CardComponent
+            title="Total Fuel Consumed"
+            value={vehicleWithSameStartTimeFuelConsumed}
+            percentage={fuelPercentage}
+            icon={<BsFillFuelPumpDieselFill style={{ color: 'white', fontSize: 30 }} />}
+          />
+        </Col>
+        
+          
+          </Row>
+        </Container>
+
+      <Container className="mt-4" style={{ maxWidth: '1000px' }}>
         <Row>
         <div className="col">
             <Card className="shadow">
               <CardHeader className="border-0">
                 <h3 className="mb-0">Travel Logs</h3>
               </CardHeader>
-             <div style={{ maxHeight: '400px', overflow: 'auto' }}>
-              <div className="table-wrapper" style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                <Scrollbars style={{ width: 800, height: 500 }}>
+             <div style={{ maxHeight: '700px', overflow: 'hidden', display: "flex", alignItems: "center", justifyItems: "center", justifyContent: "center" }}>
+              <div className="table-wrapper" style={{ maxHeight: '700px', overflowY: 'hidden' }}>
+                <Scrollbars style={{ width: 1000, height: '500px' }}>
                 <DataTable
                   value={data}
                   sortMode="multiple"
@@ -704,6 +684,11 @@ const header = renderHeader();
 
         </Row>
       </Container>
+
+      <Container className="mt-5" style={{ maxWidth: '2000px' }}>
+      <GraphCard graphData={data}/>
+      </Container>
+
       <style>
       {`
       ::-webkit-scrollbar {
