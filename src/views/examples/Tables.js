@@ -444,7 +444,7 @@ const balanceFilterTemplate = (options) => {
 
 const header = renderHeader();
 
-  console.log('data at Tables', data);
+  console.log('data ', data);
 
   const fetchData = async () => {
     try {
@@ -472,7 +472,7 @@ const header = renderHeader();
   
   return (
     <>
-          <Container className="mt-5" style={{ maxWidth: '800px' }}>
+    <Container className="mt-5" style={{ maxWidth: '800px' }}>
           <Row>
 
           <Col>
@@ -517,7 +517,10 @@ const header = renderHeader();
           </Row>
         </Container>
 
-      <Container className="mt-4" style={{ maxWidth: '1000px' }}>
+
+
+
+      <Container className="mt-4" style={{ maxWidth: '900px' }}>
         <Row>
         <div className="col">
             <Card className="shadow">
@@ -685,7 +688,7 @@ const header = renderHeader();
         </Row>
       </Container>
 
-      <Container className="mt-5" style={{ maxWidth: '2000px' }}>
+      <Container className="mt-9" style={{ maxWidth: '2000px' }}>
       <GraphCard graphData={data}/>
       </Container>
 

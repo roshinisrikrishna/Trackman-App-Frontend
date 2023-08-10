@@ -65,7 +65,7 @@ const Admin = (props) => {
     <div className="content-wrapper" style={{ marginTop: '60px', flex: 1, paddingTop: '10px' }}>
       {/* Use the Canvas component with Outlet as children */}
       <Canvas width={1600} height={900}>
-      <div className="outlet-container ml-4" style={{ width: '90%' }}>
+      <div className="outlet-container ml-4" style={{ width: '100%' }}>
         <Outlet />
       </div>
 
